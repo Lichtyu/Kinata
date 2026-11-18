@@ -13,6 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        working-directory: kinata-control
+        run: npm ci
+
+      - name: Sync Capacitor Android
+        working-directory: kinata-control
+        run: npx cap sync android
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
