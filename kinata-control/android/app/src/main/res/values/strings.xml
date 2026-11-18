@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kinata Control</string>
+    <string name="title_activity_main">Kinata Control</string>
+    <string name="package_name">com.kinata.control</string>
+    <string name="custom_url_scheme">com.kinata.control</string>
+</resources>

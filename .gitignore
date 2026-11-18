@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+*.token
+*.pem
+*.key
+*.jks
+*.keystore
+node_modules/
+**/.gradle/
+**/build/
+**/local.properties
+.DS_Store
+Thumbs.db

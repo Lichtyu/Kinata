@@ -1,0 +1,8 @@
+{
+  "appId": "com.kinata.control",
+  "appName": "Kinata Control",
+  "webDir": "web",
+  "server": {
+    "androidScheme": "https"
+  }
+}

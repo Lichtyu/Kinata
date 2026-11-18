@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090611">
+<title>Kinata Control</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090611;color:#fff;font-family:Arial,sans-serif}
+header{padding:20px;background:linear-gradient(110deg,#190c29,#10091a);border-bottom:1px solid #9b36bd}
+.brand{font-size:25px;font-weight:900;color:#ff69d4;letter-spacing:2px}
+.sub{font-size:10px;color:#b9a4c9;letter-spacing:3px}
+main{padding:18px;max-width:900px;margin:auto}
+.hero{background:linear-gradient(135deg,#241033,#100b1d 65%,#30103b);border:1px solid #a13bc2;border-radius:20px;padding:22px;box-shadow:0 0 25px #a51b7c33}
+.mascot{font-size:65px;text-align:center;filter:drop-shadow(0 0 15px #ff46ce)}
+h1{font-size:23px;color:#ff72d7;text-align:center}
+.hero p{text-align:center;color:#c9b8d3;font-size:13px}
+.status{display:flex;justify-content:center;gap:8px;align-items:center;color:#72ffb1;font-size:13px}
+.dot{width:9px;height:9px;background:#4dff9a;border-radius:50%;box-shadow:0 0 12px #4dff9a}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+.card{background:#151020;border:1px solid #462454;border-radius:15px;padding:17px;min-height:100px}
+.card .ico{font-size:25px}
+.card strong{display:block;margin-top:10px;color:#ff8bdd}
+.card small{display:block;color:#aa9bb6;margin-top:5px}
+nav{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;position:sticky;bottom:0;background:#100b19;padding:10px 4px;border-top:1px solid #673078}
+nav button{background:transparent;border:0;color:#cbb7d5;font-size:10px;padding:8px 1px}
+nav button span{display:block;font-size:20px;margin-bottom:5px}
+button{cursor:pointer}
+.action{background:linear-gradient(100deg,#d52caa,#792bd2);border:0;border-radius:10px;padding:12px;color:white;font-weight:bold;margin:5px}
+.secondary{background:#24172e;border:1px solid #9d4eb6;border-radius:10px;padding:11px;color:white;margin:5px}
+.page{display:none;margin-top:20px}
+.page.active{display:block}
+h2{color:#ff80d9}
+.voice{margin:25px auto;width:115px;height:115px;border-radius:50%;border:2px solid #ff5bd2;background:#27102e;color:white;font-size:42px;box-shadow:0 0 35px #d42cba66}
+input{background:#171020;color:white;border:1px solid #78428d;border-radius:9px;padding:12px;width:100%;margin:8px 0}
+.item{padding:14px;border-bottom:1px solid #392344;color:#e8d9ed}
+footer{text-align:center;color:#786b83;font-size:11px;padding:20px}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand">✦ KINATA CONTROL</div>
+ <div class="sub">ANIME AI MANAGEMENT SYSTEM</div>
+</header>
+<main>
+<section id="inicio" class="page active">
+ <div class="hero">
+  <div class="mascot">🎀</div>
+  <h1>Olá, comandante!</h1>
+  <p>Eu sou a Kinata. Sua assistente de controle.</p>
+  <div class="status"><i class="dot"></i> PAINEL DE CONTROLE</div>
+ </div>
+ <div class="grid">
+  <div class="card"><div class="ico">🤖</div><strong>BOT KINATA</strong><small>Status será conectado à API</small></div>
+  <div class="card"><div class="ico">🔐</div><strong>AUTORIZAÇÃO</strong><small>Controle protegido</small></div>
+  <div class="card"><div class="ico">⚡</div><strong>COMANDOS</strong><small>Gerenciamento</small></div>
+  <div class="card"><div class="ico">📡</div><strong>MONITORAMENTO</strong><small>Atividade e alertas</small></div>
+ </div>
+ <h2>Controles do bot</h2>
+ <button class="action" onclick="alert('O controle será conectado à API na próxima etapa.')">▶ LIGAR</button>
+ <button class="secondary" onclick="alert('O controle será conectado à API na próxima etapa.')">■ DESLIGAR</button>
+ <button class="secondary" onclick="alert('O controle será conectado à API na próxima etapa.')">↻ REINICIAR</button>
+</section>
+
+<section id="voz" class="page">
+ <h2>🎙️ KINATA VOICE</h2>
+ <div class="hero">
+  <div class="mascot">🎧</div>
+  <h1>Sua assistente virtual</h1>
+  <p>Toque no microfone e fale comigo.</p>
+  <div style="text-align:center"><button class="voice" onclick="ouvir()">🎙️</button></div>
+  <p id="fala">Aguardando você...</p>
+  <input id="texto" placeholder="Ou escreva sua mensagem...">
+  <button class="action" onclick="responder(document.getElementById('texto').value)">Enviar mensagem</button>
+ </div>
+ <p style="color:#a99ab5;font-size:12px">A voz inicial funciona no navegador. A integração com a API virá depois.</p>
+</section>
+
+<section id="comandos" class="page">
+ <h2>⚡ Comandos</h2>
+ <div class="card">Gerenciador de comandos <small>Lista real será integrada à API.</small></div>
+</section>
+<section id="arquivos" class="page">
+ <h2>📁 Arquivos</h2>
+ <div class="card">Gerenciador de arquivos <small>Visualização segura dos módulos.</small></div>
+</section>
+<section id="grupos" class="page">
+ <h2>👥 Grupos</h2>
+ <div class="card">Gerenciamento de grupos <small>Integração futura com o bot.</small></div>
+</section>
+</main>
+<nav>
+ <button onclick="abrir('inicio')"><span>⌂</span>Início</button>
+ <button onclick="abrir('comandos')"><span>⚡</span>Comandos</button>
+ <button onclick="abrir('arquivos')"><span>📁</span>Arquivos</button>
+ <button onclick="abrir('grupos')"><span>👥</span>Grupos</button>
+ <button onclick="abrir('voz')"><span>🎙️</span>Voz</button>
+</nav>
+<footer>KINATA CONTROL • INTERFACE INDEPENDENTE</footer>
+<script>
+function abrir(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ window.scrollTo(0,0);
+}
+function responder(t){
+ if(!t.trim())return;
+ const r='Olá! Sou a Kinata. A interface de voz está funcionando. Minha conexão com o bot será ativada na próxima etapa.';
+ document.getElementById('fala').textContent=r;
+ if('speechSynthesis' in window){
+  speechSynthesis.cancel();
+  speechSynthesis.speak(new SpeechSynthesisUtterance(r));
+ }
+}
+function ouvir(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){document.getElementById('fala').textContent='Reconhecimento de voz não disponível neste navegador.';return}
+ const rec=new SR();rec.lang='pt-BR';
+ document.getElementById('fala').textContent='Estou ouvindo...';
+ rec.onresult=e=>{
+  const t=e.results[0][0].transcript;
+  document.getElementById('texto').value=t;
+  responder(t);
+ };
+ rec.onerror=()=>document.getElementById('fala').textContent='Não consegui ouvir. Tente novamente.';
+ rec.start();
+}
+</script>
+</body>
+</html>
