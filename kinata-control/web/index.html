@@ -58,9 +58,9 @@ footer{text-align:center;color:#786b83;font-size:11px;padding:20px}
   <div class="card"><div class="ico">📡</div><strong>MONITORAMENTO</strong><small>Atividade e alertas</small></div>
  </div>
  <h2>Controles do bot</h2>
- <button class="action" onclick="alert('O controle será conectado à API na próxima etapa.')">▶ LIGAR</button>
- <button class="secondary" onclick="alert('O controle será conectado à API na próxima etapa.')">■ DESLIGAR</button>
- <button class="secondary" onclick="alert('O controle será conectado à API na próxima etapa.')">↻ REINICIAR</button>
+ <button class="action" onclick="document.getElementById('kinata-control-launch').click()">▶ LIGAR</button>
+ <button class="secondary" onclick="document.getElementById('kinata-control-launch').click()">■ DESLIGAR</button>
+ <button class="secondary" onclick="document.getElementById('kinata-control-launch').click()">↻ REINICIAR</button>
 </section>
 
 <section id="voz" class="page">
@@ -127,5 +127,144 @@ function ouvir(){
  rec.start();
 }
 </script>
+
+<style id="kinata-control-style">
+#kinata-control-launch{position:fixed;right:16px;bottom:18px;z-index:99998;background:#d72b91;color:white;border:1px solid #ed72c1;border-radius:24px;padding:13px 18px;font-weight:800;box-shadow:0 0 18px #b52b9270}
+#kinata-control-panel{position:fixed;inset:0;z-index:99999;background:#090611f5;color:#fff;padding:22px 16px;overflow:auto;font-family:Arial,sans-serif}
+#kinata-control-panel[hidden]{display:none}
+#kinata-control-panel .kc-card{max-width:520px;margin:12px auto;background:#171020;border:1px solid #74316c;border-radius:16px;padding:16px}
+#kinata-control-panel h2{color:#ff70c8}
+#kinata-control-panel input{box-sizing:border-box;width:100%;padding:13px;background:#090611;color:white;border:1px solid #a83c91;border-radius:9px;margin:8px 0}
+#kinata-control-panel button{background:#a92783;color:white;border:0;border-radius:9px;padding:12px;margin:5px;font-weight:bold}
+#kinata-control-panel pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#e8c9e5;font-size:12px}
+#kinata-control-panel .kc-muted{color:#c8b4cb;font-size:13px}
+</style>
+<button id="kinata-control-launch" type="button">🎀 CONTROLE DO BOT</button>
+<section id="kinata-control-panel" hidden>
+  <div class="kc-card">
+    <button id="kc-close" type="button">FECHAR</button>
+    <h2>🎀 Kinata Control</h2>
+    <p class="kc-muted">Conexão local protegida com o bot Kinata.</p>
+    <div id="kc-pair-area">
+      <label for="kc-code">Código temporário de pareamento</label>
+      <input id="kc-code" inputmode="numeric" maxlength="8" placeholder="Digite os 8 números">
+      <button id="kc-pair" type="button">CONECTAR APLICATIVO</button>
+    </div>
+    <div id="kc-connected" hidden>
+      <p id="kc-status">Aguardando consulta...</p>
+      <button id="kc-refresh" type="button">ATUALIZAR STATUS</button>
+      <div>
+        <button data-action="start" type="button">LIGAR</button>
+        <button data-action="stop" type="button">DESLIGAR</button>
+        <button data-action="restart" type="button">REINICIAR</button>
+      </div>
+      <h3>Atividade recente</h3>
+      <pre id="kc-logs">Sem registros carregados.</pre>
+    </div>
+    <p id="kc-message" class="kc-muted" aria-live="polite"></p>
+  </div>
+</section>
+<script id="kinata-control-script">
+(function(){
+  const base = "http://localhost:3001";
+  const key = "kinata_control_session";
+  const panel = document.getElementById("kinata-control-panel");
+  const message = document.getElementById("kc-message");
+  const pairArea = document.getElementById("kc-pair-area");
+  const connected = document.getElementById("kc-connected");
+  const status = document.getElementById("kc-status");
+  const logs = document.getElementById("kc-logs");
+  const getSession = () => localStorage.getItem(key) || "";
+  async function request(path, method, body){
+    const headers = {};
+    const session = getSession();
+    if(session) headers.Authorization = "Bearer " + session;
+    if(body !== undefined) headers["Content-Type"] = "application/json";
+    const response = await fetch(base + path, {
+      method: method || "GET",
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+      cache: "no-store"
+    });
+    const data = await response.json();
+    if(!response.ok) throw new Error(data.error || "Falha na comunicação");
+    return data;
+  }
+  function showConnection(){
+    const yes = !!getSession();
+    pairArea.hidden = yes;
+    connected.hidden = !yes;
+  }
+  async function refresh(){
+    try{
+      const data = await request("/api/status");
+      status.textContent =
+        "Bot: " + data.bot +
+        "\nPainel: " + data.dashboard +
+        "\nAutorização: " + data.authorization +
+        "\nPID: " + (data.pid || "—") +
+        "\nTempo ativo: " + data.uptime + " segundos" +
+        "\nMemória: " + data.memoryMB + " MB";
+      const logData = await request("/api/logs");
+      logs.textContent = JSON.stringify(logData.logs || [], null, 2).slice(-6000);
+      message.textContent = "Conectado à ponte local.";
+    }catch(error){
+      message.textContent = error.message;
+      if(/sessão|autorização|não autorizado/i.test(error.message)){
+        localStorage.removeItem(key);
+        showConnection();
+      }
+    }
+  }
+  const mainStart = document.querySelector("button.action");
+  if(mainStart){
+    mainStart.addEventListener("click",()=>{
+      if(getSession()){
+        const startButton = document.querySelector('#kinata-control-panel [data-action="start"]');
+        if(startButton) startButton.click();
+      }else{
+        message.textContent = "Faça o pareamento para ligar o bot.";
+      }
+    });
+  }
+  document.getElementById("kinata-control-launch").addEventListener("click",()=>{
+    panel.hidden = false;
+    showConnection();
+    if(getSession()) refresh();
+  });
+  document.getElementById("kc-close").addEventListener("click",()=>panel.hidden=true);
+  document.getElementById("kc-pair").addEventListener("click",async()=>{
+    const code = document.getElementById("kc-code").value.trim();
+    if(!/^[0-9]{8}$/.test(code)){
+      message.textContent = "Digite os 8 números do código temporário.";
+      return;
+    }
+    try{
+      message.textContent = "Verificando pareamento...";
+      const result = await request("/pair","POST",{code});
+      localStorage.setItem(key,result.session);
+      document.getElementById("kc-code").value = "";
+      showConnection();
+      await refresh();
+    }catch(error){ message.textContent = error.message; }
+  });
+  document.getElementById("kc-refresh").addEventListener("click",refresh);
+  document.querySelectorAll("#kinata-control-panel [data-action]").forEach(button=>{
+    button.addEventListener("click",async()=>{
+      const action = button.dataset.action;
+      const labels = {start:"ligar",stop:"desligar",restart:"reiniciar"};
+      if(!confirm("Confirma que deseja " + labels[action] + " o bot Kinata?")) return;
+      try{
+        message.textContent = "Enviando solicitação...";
+        const result = await request("/api/bot/" + action,"POST");
+        message.textContent = result.message || "Solicitação enviada.";
+        setTimeout(refresh,1500);
+      }catch(error){ message.textContent = error.message; }
+    });
+  });
+  showConnection();
+})();
+</script>
+
 </body>
 </html>

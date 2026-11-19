@@ -4,5 +4,10 @@
   "webDir": "web",
   "server": {
     "androidScheme": "https"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
   }
 }
